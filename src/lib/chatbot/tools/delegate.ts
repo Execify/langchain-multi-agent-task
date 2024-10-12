@@ -5,17 +5,17 @@ import chalk from 'chalk';
 
 export const delegateTool = new DynamicStructuredTool({
     name: "delegate",
-    description: 'A tool to delegate control of the dialog to another assistant',
+    description: 'A tool to delegate control of the dialog to another agent',
     schema: z.object({
-        assistant: z.enum(agents).describe('The assistant to delegate to')
+        agent: z.enum(agents).describe('The agent to delegate to')
     }),
-    func: async ({ assistant }) => {
-        console.log(`Delegating to ${chalk.blue(assistant)}...`);
+    func: async ({ agent }) => {
+        console.log(`Delegating to ${chalk.blue(agent)}...`);
 
         const string = [
-            `${assistant}`,
-            `The active agent is now the ${assistant} assistant.`,
-            `If user's request is unsatisfied. Use the provided tools to assist the user. Remember, you are the ${assistant} assistant`,
+            `${agent}`,
+            `The active agent is now the ${agent} agent.`,
+            `If user's request is unsatisfied. Use the provided tools to assist the user. Remember, you are the ${agent} agent`,
             `and the request is not complete until after you have successfully invoked the appropriate tool.`
         ].join('\n');
 

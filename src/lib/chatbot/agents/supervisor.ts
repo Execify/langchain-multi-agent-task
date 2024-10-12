@@ -1,10 +1,11 @@
 import { delegateTool } from '../tools/delegate';
 import { buildStandardPrompt, createAgent } from './shared';
 
-export const makeSupervisor = async () => {
-    
+export const makeSupervisor = () => {
+    const name = 'Supervisor';
+
 	const prompt = buildStandardPrompt({
-		agentName: 'Supervisor',
+		agentName: name,
 		agentPurpose: "Delegate to other specialised agents to solve the user's query.",
 		guidePrompt: `
 You are the Supervisor of all the other agents.
@@ -17,6 +18,7 @@ Remember! The user can only see the final response from YOU (the Supervisor), so
 	});
 
     return createAgent({ 
+        name,
         tools: [delegateTool],
         prompt
     });
