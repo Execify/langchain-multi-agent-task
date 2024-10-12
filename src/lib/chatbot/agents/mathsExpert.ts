@@ -58,7 +58,8 @@ export const makeMathsExpert = () => {
 		agentName: name,
 		agentPurpose: 'Do complex calculations for the user and other agents',
 		guidePrompt:
-			"Never make a mistake! You are the maths expert. You'll be asked to provide answers to complex mathematical questions. Be sure to show your working and explain your answers. Keep answers concise and to the point."
+			"Never make a mistake! You are the maths expert. You'll be asked to provide answers to complex mathematical questions. Be sure to show your working and explain your answers. Keep answers concise and to the point.",
+        toolGuidance: "Use the 'add', 'multiply', 'subtract', and 'divide' tools to perform calculations."
 	});
 
 	return createAgent({

@@ -30,38 +30,45 @@ export const buildStandardPrompt = (params: {
     <OTHER_AGENTS>
         <AGENT>
             <AGENT_ID>supervisor</AGENT_ID>
-            <AGENT_NAME>Supervisor</AGENT_NAME>
+            <AGENT_DESCRIPTION>The supervisor agent is the main agent that manages the conversation flow. They can also summarize anything needed.</AGENT_DESCRIPTION>
         </AGENT>
         <AGENT>
             <AGENT_ID>mathsExpert</AGENT_ID>
-            <AGENT_NAME>Maths Expert</AGENT_NAME>
+            <AGENT_DESCRIPTION>The maths expert can help with any complex calculations that are needed. Dont attempt maths without their help!</AGENT_DESCRIPTION>
         </AGENT>
         <AGENT>
             <AGENT_ID>catFacts</AGENT_ID>
-            <AGENT_NAME>Cat Facts</AGENT_NAME>
+            <AGENT_DESCRIPTION>The cat facts agent can provide interesting facts about cats. Useful for lightening the mood.</AGENT_DESCRIPTION>
         </AGENT>
         <AGENT>
             <AGENT_ID>marketingAdvisor</AGENT_ID>
-            <AGENT_NAME>Marketing Advisor</AGENT_NAME>
+            <AGENT_DESCRIPTION>The marketing advisor can provide advice on marketing strategies and tactics. Useful for business related questions.</AGENT_DESCRIPTION>
         </AGENT>
     </OTHER_AGENTS>
     
     <DELEGATION>
         If you need help from another agent, you can use the 'delegate' tool to pass the conversation to another agent.
-        Simply provide the AGENT_ID of the agent you want to delegate to.
-        You dont need to go back to the supervisor to delegate to another agent.
+        Remember you are part of a team and should work together to provide the best possible response to the user.
+        <DELEGATION_TOOL>
+            TO delegate to another agent call the "${delegateTool.name}" tool and provide the AGENT_ID of the agent you want to delegate to.
+            You dont need to go back to the supervisor to delegate to another agent.
+        </DELEGATION_TOOL>
     </DELEGATION>
 </CONTEXT>
 
-<PURPOSE>
+<YOUR_PURPOSE>
     ${params.agentPurpose}
-</PURPOSE>
+</YOUR_PURPOSE>
 
-<GUIDE>
+<JOB_GUIDE>
     ${params.guidePrompt}
-</GUIDE>
+</JOB_GUIDE>
 
 ${params.toolGuidance ? `<TOOL_GUIDANCE>\n${params.toolGuidance}\n</TOOL_GUIDANCE>` : ''}
+
+<METADATA>
+    <CURRENT_DATETIME>${new Date().toISOString()}</CURRENT_DATETIME>
+</METADATA>
 `;
 
 /*
