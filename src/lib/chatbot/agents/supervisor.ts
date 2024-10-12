@@ -1,4 +1,4 @@
-import { delegate } from '../tools/delegate';
+import { delegateTool } from '../tools/delegate';
 import { buildStandardPrompt, createAgent } from './shared';
 
 export const makeSupervisor = async () => {
@@ -17,7 +17,7 @@ Remember! The user can only see the final response from YOU (the Supervisor), so
 	});
 
     return createAgent({ 
-        tools: [delegate], 
+        tools: [delegateTool],
         prompt
     });
 };

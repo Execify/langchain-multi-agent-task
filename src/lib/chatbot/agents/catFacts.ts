@@ -1,3 +1,4 @@
+import { delegateTool } from '../tools/delegate';
 import { buildStandardPrompt, createAgent } from './shared';
 
 export const makeCatFactAgent = () => {
@@ -9,7 +10,7 @@ export const makeCatFactAgent = () => {
 	});
 
 	return createAgent({
-		tools: [],
+		tools: [delegateTool],
 		prompt
 	});
 };

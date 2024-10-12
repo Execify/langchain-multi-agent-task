@@ -1,15 +1,14 @@
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import { AIMessage, ToolMessage, type BaseMessage } from '@langchain/core/messages';
-import { makeSupervisor } from './agents/primary';
+import { makeSupervisor } from './agents/supervisor';
 import { makeCatFactAgent } from './agents/catFacts';
 import { MemorySaver } from '@langchain/langgraph';
 import { makeMarketingAdvisorAgent } from './agents/marketingAdvisor';
 import type { Runnable, RunnableConfig } from '@langchain/core/runnables';
-import { toolsCondition } from '@langchain/langgraph/prebuilt';
 import chalk from 'chalk';
-import { members } from './agents/shared';
-import { delegate } from './tools/delegate';
+import { agents } from './agents/shared';
 import { createToolNode } from './utils/createToolNode';
+import { delegateTool } from './tools/delegate';
 
 const checkpointer = new MemorySaver();
 
@@ -30,10 +29,7 @@ const OverallGraphState = Annotation.Root({
 });
 
 // Wrap the agent to return the last message
-function wrapAgent(
-	agent: Runnable<GraphState>,
-	agentName: string
-) {
+function wrapAgent(agent: Runnable<GraphState>, agentName: string) {
 	return async (state: GraphState, config?: RunnableConfig) => {
 		console.log(`Invoking agent ${chalk.blue(agentName)}...`);
 
@@ -42,10 +38,29 @@ function wrapAgent(
 		console.log(`Agent ${chalk.blue(agentName)} returned message: ${chalk.yellow(result.content)}`);
 
 		return {
-            messages: [result],
-        };
+			messages: [result]
+		};
 	};
 }
+
+// If an agent calls delegate, switch to the delegate node
+// Otherwise, stay in the same node
+const handleDelegateCondition = (gotoEnd: boolean) => {
+	return (state: GraphState) => {
+		const { messages } = state;
+		const lastMessage = messages.at(-1) as AIMessage;
+
+		const toolCalls = lastMessage.tool_calls;
+
+		// We do not allow parallel tool calls, so we can assume that there is only one tool call
+		// If the agent called delegate, switch nodes
+		if (toolCalls?.at(0)?.name === delegateTool.name) {
+			return 'delegate';
+		} else {
+			return !gotoEnd ? 'supervisor' : END;
+		}
+	};
+};
 
 export const makeChatbotGraph = async () => {
 	const supervisor = await makeSupervisor();
@@ -59,55 +74,40 @@ export const makeChatbotGraph = async () => {
 		.addNode('marketingAdvisor', wrapAgent(marketingAdvisor, 'MarketingAdvisor'));
 
 	// Add tool node for delegation
-	workflow
-		.addNode('delegate', createToolNode([delegate]))
-		.addConditionalEdges(
-			'supervisor',
-			(state: GraphState) => {
-				const { messages } = state;
-                
-				const route = toolsCondition(state.messages);
-				const lastMessage = messages.at(-1) as AIMessage;
-
-				if (route === END) {
-                    console.log("Supervisor has ended the conversation");
-					return END;
-				}
-
-				if (!lastMessage.tool_calls?.length || !lastMessage.tool_calls) {
-
-                    console.log("Supervisor did not call any tools so presumed to be the end of the conversation");
-					return END;
-				} else {
-
-					if (lastMessage.tool_calls![0].name === delegate.name) {
-                        console.log("Supervisor has delegated the conversation to another agent");
-						return 'delegate';
-					}
-
-                    console.error("The supervisor has tried to call a tool that is not the delegate tool. This is not allowed.");
-					return END;
-				}
-			},
-			{
-				delegate: 'delegate',
-				__end__: END
-			}
-		)
-		.addConditionalEdges('delegate', (state: GraphState) => {
+	workflow.addNode('delegate', createToolNode([delegateTool])).addConditionalEdges(
+		'delegate',
+		(state: GraphState) => {
 			const { messages } = state;
 			const lastMessage = messages.at(-1) as ToolMessage;
 			const route = (lastMessage.content as string).split('\n')[0];
 			return route;
-		});
+		},
+		{
+			supervisor: 'supervisor',
+			catFacts: 'catFacts',
+			marketingAdvisor: 'marketingAdvisor'
+		}
+	);
 
-	// Add edges to the primary agent from sub agents
-	Object.keys(members).forEach((member) => {
-		// @ts-expect-error - here typescript doesnt know that member is a valid node.
-		workflow.addEdge(member, 'supervisor');
+	// Let the supervisor delegate to the sub agents OR end the conversation
+	workflow.addConditionalEdges('supervisor', handleDelegateCondition(true), {
+		delegate: 'delegate',
+		__end__: END
+	} as any);
+
+	// Set sub agents delegate to eachother
+	agents.forEach((agentName) => {
+		workflow.addConditionalEdges(
+			agentName as (typeof agents)[number],
+			handleDelegateCondition(false),
+			{
+				delegate: 'delegate',
+				supervisor: 'supervisor'
+			} as any
+		);
 	});
 
-	// Start at the primary agent
+	// Start at the supervisor agent
 	workflow.addEdge(START, 'supervisor');
 
 	return workflow.compile({
