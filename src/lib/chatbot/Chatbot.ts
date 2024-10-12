@@ -6,7 +6,6 @@ import { MemorySaver } from '@langchain/langgraph';
 import { makeMarketingAdvisorAgent } from './agents/marketingAdvisor';
 import type { RunnableConfig } from '@langchain/core/runnables';
 import chalk from 'chalk';
-import { agents } from './agents/shared';
 import { createToolNode } from './utils/createToolNode';
 import { delegateTool } from './tools/delegate';
 import { makeMathsExpert } from './agents/mathsExpert';
@@ -129,25 +128,25 @@ export const makeChatbotGraph = async () => {
 		__end__: END
 	} as any);
 
-	// Set sub agents delegate to eachother
+	// Let sub agents delegate to eachother
 	["catFacts", "marketingAdvisor", "mathsExpert"].forEach((agent) => {
-        const agentName = agent as (typeof agents)[number];
+        const agentName = agent as keyof typeof agentsAndTools;
 
         let edges = {
             delegate: 'delegate',
             supervisor: 'supervisor'
         } as any;
 
-        let hasTools = agentsAndTools[agentName].toolsNode !== undefined;
-
-        if(hasTools) {
+        if(agentsAndTools[agentName].toolsNode !== undefined) {
+            workflow.addEdge(`${agentName}Tools` as any, "mathsExpert");
             edges[`${agentName}Tools`] = `${agentName}Tools`;
         }
 
 		workflow.addConditionalEdges(
-			agentName as (typeof agents)[number],
+			agentName,
 			handleDelegateCondition({
-                next: 'supervisor'
+                next: 'supervisor',
+                toolsNodeName: agentsAndTools[agentName].toolsNode !== undefined ? `${agentName}Tools` : undefined
             }),
 			edges
 		);

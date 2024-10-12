@@ -2,6 +2,7 @@ import { DynamicStructuredTool } from 'langchain/tools';
 import { delegateTool } from '../tools/delegate';
 import { buildStandardPrompt, createAgent } from './shared';
 import { z } from 'zod';
+import chalk from 'chalk';
 
 export const additionTool = new DynamicStructuredTool({
     name: "add",
@@ -10,6 +11,8 @@ export const additionTool = new DynamicStructuredTool({
         numbers: z.array(z.number()).min(2).describe('The numbers to add together')
     }),
     func: async ({numbers}) => {
+        console.log(chalk.gray(`Adding ${numbers.join(', ')}...`));
+
         const sum = numbers.reduce((acc, val) => acc + val, 0);
         return `The sum of ${numbers.join(' + ')} is ${sum}`;
     }
@@ -22,6 +25,8 @@ export const multiplyTool = new DynamicStructuredTool({
         numbers: z.array(z.number()).min(2).describe('The numbers to multiply together')
     }),
     func: async ({numbers}) => {
+        console.log(chalk.gray(`Multiplying ${numbers.join(', ')}...`));
+
         const product = numbers.reduce((acc, val) => acc * val, 1);
         return `The product of ${numbers.join(' * ')} is ${product}`;
     }
@@ -34,6 +39,8 @@ export const subtractTool = new DynamicStructuredTool({
         numbers: z.array(z.number()).min(2).describe('The numbers to subtract from')
     }),
     func: async ({numbers}) => {
+        console.log(chalk.gray(`Subtracting ${numbers.join(', ')}...`));
+
         const difference = numbers.reduce((acc, val) => acc - val);
         return `The difference of ${numbers.join(' - ')} is ${difference}`;
     }
@@ -46,6 +53,8 @@ export const divideTool = new DynamicStructuredTool({
         numbers: z.array(z.number()).min(2).describe('The numbers to divide')
     }),
     func: async ({numbers}) => {
+        console.log(chalk.gray(`Dividing ${numbers.join(', ')}...`));
+        
         const quotient = numbers.reduce((acc, val) => acc / val);
         return `The quotient of ${numbers.join(' / ')} is ${quotient}`;
     }
