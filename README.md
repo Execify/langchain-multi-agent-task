@@ -16,7 +16,7 @@ This chatbot has multiple agents and you can see the layout of the agents in the
 
 Simply enter your prompt in the text box and press enter to send the message to the chatbot.
 
-![image](https://github.com/user-attachments/assets/ab4bbc6b-025a-46fb-a715-61b8e78f8f79)
+![image](https://github.com/user-attachments/assets/8eb31554-c67f-47b6-8379-1dccd88167cf)
 
 ## Adding Agents
 
