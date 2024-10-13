@@ -99,9 +99,6 @@ export const makeChatbotGraph = async () => {
 			'marketingAdvisor',
 			wrapAgent(agentsAndTools['marketingAdvisor'])
 		);
-    
-    // Add agent tools to the graph
-    workflow.addNode("mathsExpertTools", agentsAndTools['mathsExpert'].toolsNode!);
 
 	// Add tool node for delegation
 	workflow.addNode('delegate', createToolNode([delegateTool])).addConditionalEdges(
@@ -138,7 +135,12 @@ export const makeChatbotGraph = async () => {
         } as any;
 
         if(agentsAndTools[agentName].toolsNode !== undefined) {
-            workflow.addEdge(`${agentName}Tools` as any, "mathsExpert");
+
+            // Add agent tools to the graph
+            workflow.addNode(`${agentName}Tools`, agentsAndTools[agentName].toolsNode!);
+            workflow.addEdge(`${agentName}Tools` as any, agentName);
+
+            // Include in conditional edge
             edges[`${agentName}Tools`] = `${agentName}Tools`;
         }
 

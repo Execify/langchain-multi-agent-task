@@ -65,7 +65,7 @@ export const makeMathsExpert = () => {
 
 	const prompt = buildStandardPrompt({
 		agentName: name,
-		agentPurpose: 'Do complex calculations for the user and other agents',
+		agentPurpose: 'Do complex calculations *using tools* for the user and other agents',
 		guidePrompt:
 			"Never make a mistake! You are the maths expert. You'll be asked to provide answers to complex mathematical questions. Be sure to show your working and explain your answers. Keep answers concise and to the point.",
         toolGuidance: "Use the 'add', 'multiply', 'subtract', and 'divide' tools to perform calculations."
