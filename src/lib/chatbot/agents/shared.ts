@@ -5,14 +5,6 @@ import { createToolNode } from '../utils/createToolNode';
 import { delegateTool } from '../tools/delegate';
 
 /*
- * Agents available in the chatbot
- * This is used to generate the context and graph for the chatbot
- * 
- * If you add a new agent, make sure to add it here also!
- */
-export const agents = ["catFacts", "marketingAdvisor", "mathsExpert", "searcher"] as const;
-
-/*
  * Build an agent prompt with some standard formatting.
  * This is optional but can be useful to provide context to the agent.
 */

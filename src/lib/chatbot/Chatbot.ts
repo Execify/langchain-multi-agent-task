@@ -75,16 +75,17 @@ const handleDelegateCondition = (params: { next: string; toolsNodeName?: string 
 	};
 };
 
-export const makeChatbotGraph = async () => {
-	const agentsAndTools = {
-		supervisor: makeSupervisor(),
-		mathsExpert: makeMathsExpert(),
-		catFacts: makeCatFactAgent(),
-		marketingAdvisor: makeMarketingAdvisorAgent(),
-        searcher: makeSearcherAgent()
-	};
+export const agentsAndTools = {
+    supervisor: makeSupervisor(),
+    mathsExpert: makeMathsExpert(),
+    catFacts: makeCatFactAgent(),
+    marketingAdvisor: makeMarketingAdvisorAgent(),
+    searcher: makeSearcherAgent()
+};
 
-	// Add agents to the graph
+export const makeChatbotGraph = async () => {
+
+	// Add agents to the graph. Update this to add more agents
 	// (Would loop this but typescript doesn't like it)
 	const workflow = new StateGraph(OverallGraphState)
 		.addNode('supervisor', wrapAgent(agentsAndTools['supervisor']))
@@ -94,6 +95,7 @@ export const makeChatbotGraph = async () => {
 		.addNode('searcher', wrapAgent(agentsAndTools['searcher']));
 
 	// Add tool node for delegation
+    // Delegation is a special tool that allows agents to pass the conversation to another agent
 	workflow.addNode('delegate', createToolNode([delegateTool])).addConditionalEdges(
 		'delegate',
 		(state: GraphState) => {
@@ -115,6 +117,7 @@ export const makeChatbotGraph = async () => {
 	);
 
 	// Let the supervisor delegate to the sub agents OR end the conversation
+    // We dont want other agents to end the conversation, so we only allow the supervisor to do this. (This is a design choice, feel free to change it)
 	workflow.addConditionalEdges(
 		'supervisor',
 		handleDelegateCondition({
@@ -132,11 +135,14 @@ export const makeChatbotGraph = async () => {
 		.forEach((agent) => {
 			const agentName = agent as keyof typeof agentsAndTools;
 
+            // Create the edges this agent can take
+            // Agents can delegate, do nothing which returns to the supervisor, or go to their tools node (if they have one)
 			let edges = {
 				delegate: 'delegate',
 				supervisor: 'supervisor'
 			} as any;
 
+            // Does this agent need a tools node?
 			if (agentsAndTools[agentName].toolsNode !== undefined) {
 				// Add agent tools to the graph
 				workflow.addNode(`${agentName}Tools`, agentsAndTools[agentName].toolsNode!);
@@ -146,6 +152,7 @@ export const makeChatbotGraph = async () => {
 				edges[`${agentName}Tools`] = `${agentName}Tools`;
 			}
 
+            // Add the edges to the graph
 			workflow.addConditionalEdges(
 				agentName,
 				handleDelegateCondition({
@@ -159,7 +166,8 @@ export const makeChatbotGraph = async () => {
 
 	// Start at the supervisor agent
 	workflow.addEdge(START, 'supervisor');
-
+    
+    // We're done! Add the chackpointer (memory saver) to the workflow and return it so it can be invoked
 	return workflow.compile({
 		checkpointer
 	});

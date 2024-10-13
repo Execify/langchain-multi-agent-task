@@ -1,12 +1,12 @@
 import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { agents } from '../agents/shared';
 
 export const delegateTool = new DynamicStructuredTool({
     name: "delegate",
     description: 'A tool to delegate control of the dialog to another agent',
     schema: z.object({
-        agent: z.enum(agents).describe('The agent to delegate to')
+        // Get list of agents from the shared agents object. Split into an array like this so typescript can infer the type
+        agent: z.string().describe("The agent to delegate to. Use any valid AGENT_ID."),
     }),
     func: async ({ agent }) => {
         const string = [
