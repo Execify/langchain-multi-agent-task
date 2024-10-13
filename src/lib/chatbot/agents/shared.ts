@@ -10,7 +10,7 @@ import { delegateTool } from '../tools/delegate';
  * 
  * If you add a new agent, make sure to add it here also!
  */
-export const agents = ["catFacts", "marketingAdvisor", "mathsExpert"] as const;
+export const agents = ["catFacts", "marketingAdvisor", "mathsExpert", "searcher"] as const;
 
 /*
  * Build an agent prompt with some standard formatting.
@@ -44,6 +44,10 @@ export const buildStandardPrompt = (params: {
             <AGENT_ID>marketingAdvisor</AGENT_ID>
             <AGENT_DESCRIPTION>The marketing advisor can provide advice on marketing strategies and tactics. Useful for business related questions.</AGENT_DESCRIPTION>
         </AGENT>
+        <AGENT>
+            <AGENT_ID>searcher</AGENT_ID>
+            <AGENT_DESCRIPTION>The searcher agent can search the internet for information. Useful for finding information that is not known by the other agents.</AGENT_DESCRIPTION>
+        </AGENT>
     </OTHER_AGENTS>
     
     <DELEGATION>
@@ -54,6 +58,10 @@ export const buildStandardPrompt = (params: {
             You dont need to go back to the supervisor to delegate to another agent.
         </DELEGATION_TOOL>
     </DELEGATION>
+
+    <METADATA>
+        <CURRENT_DATETIME>${new Date().toISOString()}</CURRENT_DATETIME>
+    </METADATA>
 </CONTEXT>
 
 <YOUR_PURPOSE>
@@ -65,10 +73,6 @@ export const buildStandardPrompt = (params: {
 </JOB_GUIDE>
 
 ${params.toolGuidance ? `<TOOL_GUIDANCE>\n${params.toolGuidance}\n</TOOL_GUIDANCE>` : ''}
-
-<METADATA>
-    <CURRENT_DATETIME>${new Date().toISOString()}</CURRENT_DATETIME>
-</METADATA>
 `;
 
 /*

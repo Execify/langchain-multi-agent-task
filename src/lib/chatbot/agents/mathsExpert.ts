@@ -4,7 +4,7 @@ import { buildStandardPrompt, createAgent } from './shared';
 import { z } from 'zod';
 import chalk from 'chalk';
 
-export const additionTool = new DynamicStructuredTool({
+const additionTool = new DynamicStructuredTool({
     name: "add",
     description: 'Add a set of numbers together',
     schema: z.object({
@@ -18,7 +18,7 @@ export const additionTool = new DynamicStructuredTool({
     }
 });
 
-export const multiplyTool = new DynamicStructuredTool({
+const multiplyTool = new DynamicStructuredTool({
     name: "multiply",
     description: 'Multiply a set of numbers together',
     schema: z.object({
@@ -32,7 +32,7 @@ export const multiplyTool = new DynamicStructuredTool({
     }
 });
 
-export const subtractTool = new DynamicStructuredTool({
+const subtractTool = new DynamicStructuredTool({
     name: "subtract",
     description: 'Subtract a set of numbers together',
     schema: z.object({
@@ -46,7 +46,7 @@ export const subtractTool = new DynamicStructuredTool({
     }
 });
 
-export const divideTool = new DynamicStructuredTool({
+const divideTool = new DynamicStructuredTool({
     name: "divide",
     description: 'Divide a set of numbers together',
     schema: z.object({
@@ -68,7 +68,7 @@ export const makeMathsExpert = () => {
 		agentPurpose: 'Do complex calculations *using tools* for the user and other agents',
 		guidePrompt:
 			"Never make a mistake! You are the maths expert. You'll be asked to provide answers to complex mathematical questions. Be sure to show your working and explain your answers. Keep answers concise and to the point.",
-        toolGuidance: "Use the 'add', 'multiply', 'subtract', and 'divide' tools to perform calculations."
+        toolGuidance: "Use the 'add', 'multiply', 'subtract', and 'divide' tools to perform calculations. never assume anwers if you have a tool you could use."
 	});
 
 	return createAgent({

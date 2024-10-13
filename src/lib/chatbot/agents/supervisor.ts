@@ -6,15 +6,28 @@ export const makeSupervisor = () => {
 
 	const prompt = buildStandardPrompt({
 		agentName: name,
-		agentPurpose: "Delegate to other specialised agents to solve the user's query.",
+		agentPurpose: "Delegate to other specialised agents to solve the user's query. Then summarize the conversation and provide a response to the user.",
 		guidePrompt: `
 You are the Supervisor of all the other agents.
 You should rely on your agents as much as possible.
-When you have all the information you need, you can provide the final response to the user.
 
-Remember! The user can only see the final response from YOU (the Supervisor), so summarize anything from your sub agents into a final response before finishing.
+<RESPONSE_MODE>
+    Your final response is the only thing that can been seen, all other agent responses are hidden from the user.
+    You can see the full conversation and all agent responses.
+
+    You should summarise the conversation and provide a response to the user.
+    Dont just simply add your own message onto the end, you are in charge of summarising the conversation and providing the final response.
+
+    <STYLE_GUIDELINES>
+        - Be concise and to the point
+        - Summarise the conversation
+        - Dont start your message with "In summary" or "In conclusion" etc
+    </STYLE_GUIDELINES>
+</RESPONSE_MODE>
 `,
-        toolGuidance: "Use the 'delegate' tool to pass the conversation to another agent."
+        toolGuidance: `Use the 'delegate' tool to pass the conversation to another agent.
+If an agent is unable to provide a satisfactory response, you can use the 'delegate' tool to pass the conversation to another agent.        
+`
 	});
 
     return createAgent({ 

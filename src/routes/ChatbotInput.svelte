@@ -3,7 +3,7 @@
 
     export let isWaitingForResponse: boolean;
 
-    let message = 'Can you tell me one fact about cats and marketing?';
+    let message = 'What is Execify?';
 
     const dispatch = createEventDispatcher()
 
