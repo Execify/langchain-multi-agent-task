@@ -26,9 +26,12 @@ In this project we have a helper function for creating agents called `createAgen
 
 ### Adding a new agent to the graph
 
-Once you have created your agent, you can add it to the graph by updating the `makeChatbotGraph` function in the `src/lib/chatbot/Chatbot.ts` file. This file contains the graph layout for the chatbot. 
+Once you have created your agent, you can add it to the graph by updating the `makeChatbotGraph` function in the `src/lib/chatbot/Chatbot.ts` file. This file contains the graph layout for the chatbot.
+Add a node for your agent and update the delegate node if you want to delegate to your agent.
 
 You should also update the `buildStandardPrompt` function in `src/lib/chatbot/shared.ts` to include the new agent so that other agents can delegate to it if required.
+
+If you are stuck trying to add a new agent, try copying the mathsExpert agent and searching through the code for "mathsExpert" to see where it is referenced.
 
 ## Debugging
 

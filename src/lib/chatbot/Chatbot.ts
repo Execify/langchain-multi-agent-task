@@ -75,6 +75,9 @@ const handleDelegateCondition = (params: { next: string; toolsNodeName?: string 
 	};
 };
 
+/**
+ * Agents and tools used in the chatbot
+ */
 export const agentsAndTools = {
     supervisor: makeSupervisor(),
     mathsExpert: makeMathsExpert(),
@@ -83,6 +86,9 @@ export const agentsAndTools = {
     searcher: makeSearcherAgent()
 };
 
+/**
+ * Create the chatbot graph using LangGraph
+ */
 export const makeChatbotGraph = async () => {
 
 	// Add agents to the graph. Update this to add more agents
@@ -107,6 +113,8 @@ export const makeChatbotGraph = async () => {
 
 			return route;
 		},
+        // Edges for the delegate node, add any new agents here (if you want them to be delegatable)
+        // This is optional in theory, but not supplying it will mean that delegate could technically go to any node, which is not ideal
 		{
 			supervisor: 'supervisor',
 			catFacts: 'catFacts',
