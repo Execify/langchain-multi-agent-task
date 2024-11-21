@@ -16,7 +16,7 @@ Add a new agent(s) and update/reprompt existing ones in order to make the chatbo
 - Feel free to change any part of the application / code where required
 - Build the best prompts you can
 - Make chatbot as reliable as possible
-- You will likely need to change existing agents / nodes / edges.
+- You will likely need to change existing agents / nodes / edges. You can change any part of this project so if you think something can be done better, change it!
 - The existing prompts are very minimal, expand on them as much as possible.
 
 ## Getting Started
