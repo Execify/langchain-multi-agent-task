@@ -5,7 +5,7 @@ Use this as base for completing the task below.
 
 ## Your Task
 
-The "Super Chatbot 9000" needs task management functionality. 
+The "Super Chatbot 9000" needs task management functionality (Think todo lists or agendas). 
 
 Add a new agent(s) and update/reprompt existing ones in order to make the chatbot a functional tasking tool.
 
