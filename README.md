@@ -9,6 +9,11 @@ The "Super Chatbot 9000" needs task management functionality (Think todo lists o
 
 Add a new agent(s) and update/reprompt existing ones in order to make the chatbot a functional tasking tool.
 
+Some example prompts:
+- "Add a todo to walk my dog"
+- "How many open tasks do I have?"
+- "Add a note saying 'Book a room!' to my 'Board Meeting Planning' task"
+
 ### Guide
 
 - Tasks should be retrievable between invocations of the chatbot
