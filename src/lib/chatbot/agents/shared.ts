@@ -40,13 +40,17 @@ export const buildStandardPrompt = (params: {
             <AGENT_ID>searcher</AGENT_ID>
             <AGENT_DESCRIPTION>The searcher agent can search the internet for information. Useful for finding information that is not known by the other agents.</AGENT_DESCRIPTION>
         </AGENT>
+        <AGENT>
+            <AGENT_ID>taskHandler</AGENT_ID>
+            <AGENT_DESCRIPTION>The task handler agent can manage the user's task list. Useful for adding, removing and listing tasks.</AGENT_DESCRIPTION>
+        </AGENT>
     </OTHER_AGENTS>
     
     <DELEGATION>
         If you need help from another agent, you can use the 'delegate' tool to pass the conversation to another agent.
         Remember you are part of a team and should work together to provide the best possible response to the user.
         <DELEGATION_TOOL>
-            TO delegate to another agent call the "${delegateTool.name}" tool and provide the AGENT_ID of the agent you want to delegate to.
+            To delegate to another agent call the "${delegateTool.name}" tool and provide the AGENT_ID of the agent you want to delegate to.
             You dont need to go back to the supervisor to delegate to another agent.
         </DELEGATION_TOOL>
     </DELEGATION>
@@ -73,7 +77,8 @@ ${params.toolGuidance ? `<TOOL_GUIDANCE>\n${params.toolGuidance}\n</TOOL_GUIDANC
  */
 const llm = new ChatOpenAI({
 	model: 'gpt-4o-mini',
-	temperature: 0
+	temperature: 0,
+    openAIApiKey: process.env.OPENAI_API_KEY
 });
 
 /*

@@ -11,6 +11,7 @@ import { delegateTool } from './tools/delegate';
 import { makeMathsExpert } from './agents/mathsExpert';
 import { createAgent } from './agents/shared';
 import { makeSearcherAgent } from './agents/searcher';
+import { makeTaskHandlerAgent } from './agents/taskHandler';
 
 const checkpointer = new MemorySaver();
 
@@ -83,7 +84,8 @@ export const agentsAndTools = {
     mathsExpert: makeMathsExpert(),
     catFacts: makeCatFactAgent(),
     marketingAdvisor: makeMarketingAdvisorAgent(),
-    searcher: makeSearcherAgent()
+    searcher: makeSearcherAgent(),
+    taskHandler: makeTaskHandlerAgent()
 };
 
 /**
@@ -98,7 +100,8 @@ export const makeChatbotGraph = async () => {
 		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert']))
 		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts']))
 		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor']))
-		.addNode('searcher', wrapAgent(agentsAndTools['searcher']));
+		.addNode('searcher', wrapAgent(agentsAndTools['searcher']))
+		.addNode('taskHandler', wrapAgent(agentsAndTools['taskHandler']));
 
 	// Add tool node for delegation
     // Delegation is a special tool that allows agents to pass the conversation to another agent
@@ -120,7 +123,8 @@ export const makeChatbotGraph = async () => {
 			catFacts: 'catFacts',
 			marketingAdvisor: 'marketingAdvisor',
 			mathsExpert: 'mathsExpert',
-            searcher: 'searcher'
+            searcher: 'searcher',
+            taskHandler: 'taskHandler'
 		}
 	);
 
