@@ -37,16 +37,16 @@ const removeTaskTool = new DynamicStructuredTool({
 	name: 'removeTask',
 	description: 'Remove a task from the task list',
 	schema: z.object({
-		task: z.string().describe('The ID or exact text of the task to remove')
+		taskId: z.string().describe('The ID of the task to remove')
 	}),
-	func: async ({ task }) => {
-		console.log(chalk.gray(`Removing task ${task} from the task list...`));
+	func: async ({ taskId }) => {
+		console.log(chalk.gray(`Removing task ${taskId} from the task list...`));
 		const result = await db.run(
-			'DELETE FROM tasks WHERE id = ? OR task = ?',
-			[task, task]
+			'DELETE FROM tasks WHERE id = ?',
+			[taskId]
 		);
-		if (result.changes === 0) return 'No task found to remove';
-		return `Task removed successfully`;
+		if (result.changes === 0) return `No task found with ID ${taskId}`;
+		return `Task with ID ${taskId} removed successfully`;
 	}
 });
 
