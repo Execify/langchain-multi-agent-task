@@ -3,6 +3,14 @@
 This is an example chatbot written in Typescript using Langchain / LangGraph.
 Use this as base for completing the task below.
 
+## DEMO VIDEO
+
+<!-- Or for an embedded video player (if supported): -->
+<video width="80%" controls>
+  <source src="./assets/execify_interview_demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## Your Task
 
 The "Super Chatbot 9000" needs task management functionality (Think todo lists or agendas). 

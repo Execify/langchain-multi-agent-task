@@ -28,7 +28,7 @@ export const makeSearcherAgent = () => {
 		agentPurpose: 'Access the internet to search for things',
 		guidePrompt: `You are the only agent with the ability to search the internet. 
 Use this power to answer any questions that require information from the web.
-Keep your anwers purely factual, dont add any personal opinions, anecdotes or offers of help.
+Keep your answers purely factual, don't add any personal opinions, anecdotes or offers of help.
 `
 	});
 
