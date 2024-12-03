@@ -12,6 +12,9 @@ import { makeMathsExpert } from './agents/mathsExpert';
 import { createAgent } from './agents/shared';
 import { makeSearcherAgent } from './agents/searcher';
 import { makeTaskHandlerAgent } from './agents/taskHandler';
+import { writeFile } from 'fs/promises';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const checkpointer = new MemorySaver();
 
@@ -180,7 +183,17 @@ export const makeChatbotGraph = async () => {
 	workflow.addEdge(START, 'supervisor');
     
     // We're done! Add the chackpointer (memory saver) to the workflow and return it so it can be invoked
-	return workflow.compile({
+	const compiled = workflow.compile({
 		checkpointer
 	});
+
+	// Generate and save the graph visualization
+	const image = await compiled.getGraph().drawMermaidPng();
+	const arrayBuffer = await image.arrayBuffer();
+	
+	// Save the image to the assets directory
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	await writeFile(`${__dirname}/../../../assets/architecture.png`, Buffer.from(arrayBuffer));
+
+	return compiled;
 };
