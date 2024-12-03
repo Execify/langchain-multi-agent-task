@@ -73,6 +73,42 @@ const addNoteTool = new DynamicStructuredTool({
 	}
 });
 
+const completeTaskTool = new DynamicStructuredTool({
+	name: 'completeTask',
+	description: 'Mark a task as complete or incomplete',
+	schema: z.object({
+		taskId: z.string().describe('The ID of the task to update'),
+		completed: z.boolean().describe('True to mark as complete, false to mark as incomplete')
+	}),
+	func: async ({ taskId, completed }) => {
+		console.log(chalk.gray(`Marking task ${taskId} as ${completed ? 'complete' : 'incomplete'}...`));
+		const result = await db.run(
+			'UPDATE tasks SET completed = ? WHERE id = ?',
+			[completed, taskId]
+		);
+		if (result.changes === 0) return `No task found with ID ${taskId}`;
+		return `Task ${taskId} marked as ${completed ? 'complete' : 'incomplete'}`;
+	}
+});
+
+const updateTaskDescriptionTool = new DynamicStructuredTool({
+	name: 'updateTaskDescription',
+	description: 'Update a task description',
+	schema: z.object({
+		taskId: z.string().describe('The ID of the task to update'),
+		updatedDescription: z.string().describe('The updated task description')
+	}),
+	func: async ({ taskId, updatedDescription }) => {
+		console.log(chalk.gray(`Updating task ${taskId} description...`));
+		const result = await db.run(
+			'UPDATE tasks SET task = ? WHERE id = ?',
+			[updatedDescription, taskId]
+		);
+		if (result.changes === 0) return `No task found with ID ${taskId}`;
+		return `Task ${taskId} description updated successfully`;
+	}
+});
+
 export const makeTaskHandlerAgent = () => {
 	const name = 'TaskHandler';
 
@@ -96,7 +132,15 @@ CREATE TABLE tasks (
 
 	return createAgent({
 		name,
-		tools: [delegateTool, addTaskTool, listTasksTool, removeTaskTool, addNoteTool],
+		tools: [
+			delegateTool,
+			addTaskTool,
+			listTasksTool,
+			removeTaskTool,
+			addNoteTool,
+			completeTaskTool,
+			updateTaskDescriptionTool
+		],
 		prompt
 	});
 };
