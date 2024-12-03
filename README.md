@@ -26,6 +26,9 @@ Use this as base for completing the task below.
 
 [ ] Represent that task table as a markdown table in the chatbot ui
   - Only display the task list when the user asks for it
+  - Update the graph invocation to stream events, allow token streaming + send markdown table event
+  - Another option would be to add a tasks field to the agent state
+  - could also render the task table where the graph png is and have it update as the agent updates the table
 
 [ ] Implement a vector store
   - Perhaps a file backed knowledge store (Such as PDFs)
