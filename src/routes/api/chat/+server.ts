@@ -48,6 +48,7 @@ export const POST = async ({ request }) => {
 	const threadId = Math.random().toString(36).substring(7);
 
 	// Run chatbot
+	// TODO: update this to stream events, allow token streaming + send markdown table event
 	const result = await graph.invoke(
 		{
 			messages

@@ -11,6 +11,10 @@ import { delegateTool } from './tools/delegate';
 import { makeMathsExpert } from './agents/mathsExpert';
 import { createAgent } from './agents/shared';
 import { makeSearcherAgent } from './agents/searcher';
+import { makeTaskHandlerAgent } from './agents/taskHandler';
+import { writeFile } from 'fs/promises';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const checkpointer = new MemorySaver();
 
@@ -83,7 +87,8 @@ export const agentsAndTools = {
     mathsExpert: makeMathsExpert(),
     catFacts: makeCatFactAgent(),
     marketingAdvisor: makeMarketingAdvisorAgent(),
-    searcher: makeSearcherAgent()
+    searcher: makeSearcherAgent(),
+    taskHandler: makeTaskHandlerAgent()
 };
 
 /**
@@ -98,7 +103,8 @@ export const makeChatbotGraph = async () => {
 		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert']))
 		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts']))
 		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor']))
-		.addNode('searcher', wrapAgent(agentsAndTools['searcher']));
+		.addNode('searcher', wrapAgent(agentsAndTools['searcher']))
+		.addNode('taskHandler', wrapAgent(agentsAndTools['taskHandler']));
 
 	// Add tool node for delegation
     // Delegation is a special tool that allows agents to pass the conversation to another agent
@@ -120,7 +126,8 @@ export const makeChatbotGraph = async () => {
 			catFacts: 'catFacts',
 			marketingAdvisor: 'marketingAdvisor',
 			mathsExpert: 'mathsExpert',
-            searcher: 'searcher'
+            searcher: 'searcher',
+            taskHandler: 'taskHandler'
 		}
 	);
 
@@ -176,7 +183,17 @@ export const makeChatbotGraph = async () => {
 	workflow.addEdge(START, 'supervisor');
     
     // We're done! Add the chackpointer (memory saver) to the workflow and return it so it can be invoked
-	return workflow.compile({
+	const compiled = workflow.compile({
 		checkpointer
 	});
+
+	// Generate and save the graph visualization
+	const image = await compiled.getGraph().drawMermaidPng();
+	const arrayBuffer = await image.arrayBuffer();
+	
+	// Save the image to the assets directory
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	await writeFile(`${__dirname}/../../../assets/architecture.png`, Buffer.from(arrayBuffer));
+
+	return compiled;
 };
