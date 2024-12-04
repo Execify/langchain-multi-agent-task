@@ -1,5 +1,5 @@
 import { makeChatbotGraph } from '$lib/chatbot/Chatbot';
-import { AIMessage, HumanMessage, AIMessageChunk } from '@langchain/core/messages';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 
 const messagesSchema = z.object({
@@ -40,7 +40,6 @@ export const POST = async ({ request }) => {
 	const { messages } = messagesSchema.parse(data);
 	const graph = await makeChatbotGraph();
 
-	// Keep thread_id and add user
 	const threadId = Math.random().toString(36).substring(7);
 	const config = {
 		configurable: {
@@ -49,7 +48,6 @@ export const POST = async ({ request }) => {
 		recursionLimit: 20
 	};
 
-	// Stream events with comprehensive event handling
 	const stream = new ReadableStream({
 		async start(controller) {
 			const events = graph.streamEvents(
@@ -66,6 +64,10 @@ export const POST = async ({ request }) => {
 							data: data.chunk.content
 						})
 					);
+				}
+
+				else if (event === 'on_custom_event') {
+					console.log("CUSTOM EVENT: ", JSON.stringify({ event, data, tags }, null, 2));
 				}
 			}
 			controller.close();
