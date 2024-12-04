@@ -1,5 +1,5 @@
 import { makeChatbotGraph } from '$lib/chatbot/Chatbot';
-import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import { AIMessage, HumanMessage, AIMessageChunk } from '@langchain/core/messages';
 import { z } from 'zod';
 
 const messagesSchema = z.object({
@@ -37,34 +37,43 @@ const messagesSchema = z.object({
 
 export const POST = async ({ request }) => {
 	const data = await request.json();
-
-	// Validate the request body
 	const { messages } = messagesSchema.parse(data);
-
-	// Compile chatbot graph
 	const graph = await makeChatbotGraph();
 
-	// Generate a random thread id
+	// Keep thread_id and add user
 	const threadId = Math.random().toString(36).substring(7);
-
-	// Run chatbot
-	// TODO: update this to stream events, allow token streaming + send markdown table event
-	const result = await graph.invoke(
-		{
-			messages
+	const config = {
+		configurable: {
+			thread_id: threadId,
 		},
-		{
-			configurable: {
-				thread_id: threadId
-			},
-            recursionLimit: 20
-		}
-	);
+		recursionLimit: 20
+	};
 
-	// Return with final message
-	return new Response(
-		JSON.stringify({
-			result: result.messages.at(-1).content
-		})
-	);
+	// Stream events with comprehensive event handling
+	const stream = new ReadableStream({
+		async start(controller) {
+			const events = graph.streamEvents(
+				{ messages },
+				{ ...config, version: 'v2' }
+			);
+
+			for await (const { event, data, tags } of events) {
+				
+				if (event === 'on_chat_model_stream' && tags?.includes('Supervisor')) {
+					console.log(JSON.stringify({ event, data, tags }, null, 2));
+					controller.enqueue(
+						JSON.stringify({
+							type: 'token',
+							data: data.chunk.content
+						})
+					);
+				}
+			}
+			controller.close();
+		}
+	});
+
+	return new Response(stream, {
+		headers: { 'Content-Type': 'application/json' }
+	});
 };

@@ -4,6 +4,7 @@
 
     export let isWaitingForResponse: boolean;
     export let chatbotMessages: BaseMessage[] = [];
+    export let streamingMessage: string = '';
 </script>
 
 <div class="flex flex-col gap-2 rounded-md p-2 bg-white border">
@@ -22,7 +23,17 @@
         </div>
     {/each}
 
-    {#if isWaitingForResponse}
+    {#if streamingMessage}
+        <div class="flex flex-row gap-2">
+            <div class="flex flex-col">
+                <div class="px-4 py-2 rounded-md shadow-md bg-primary-100 text-primary-950 shadow-primary-200">
+                    <p class="whitespace-pre-wrap">{streamingMessage}</p>
+                </div>
+            </div>
+        </div>
+    {/if}
+
+    {#if isWaitingForResponse && !streamingMessage}
         <div class="flex flex-row gap-2 items-center">
             Thinking...
             <div role="status">

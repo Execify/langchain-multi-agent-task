@@ -54,6 +54,75 @@
         // We are no longer waiting for a response
 		isWaitingForResponse = false;
 	};
+
+	let streamingMessage = '';
+
+	async function handleMessage(event) {
+		const message = event.detail;
+		isWaitingForResponse = true;
+		streamingMessage = '';
+
+		// Add user message immediately
+		chatbotMessages = [...chatbotMessages, new HumanMessage({ content: message })];
+
+		try {
+			const response = await fetch('/api/chat', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					messages: chatbotMessages.map(msg => ({
+						type: msg._getType(),
+						content: msg.content
+					}))
+				})
+			});
+
+			const reader = response.body.getReader();
+			let fullMessage = '';
+			let buffer = '';
+
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				
+				// Decode the chunk and add to buffer
+				buffer += new TextDecoder().decode(value);
+				
+				// Try to extract complete JSON objects
+				let startIndex = 0;
+				let endIndex = buffer.indexOf('}', startIndex);
+				
+				while (endIndex !== -1) {
+					try {
+						const jsonString = buffer.substring(startIndex, endIndex + 1);
+						const data = JSON.parse(jsonString);
+						if (data.type === 'token' && data.data) {
+							fullMessage += data.data;
+							streamingMessage = fullMessage;
+						}
+						startIndex = endIndex + 1;
+						endIndex = buffer.indexOf('}', startIndex);
+					} catch (e) {
+						// If parsing fails, try the next closing brace
+						endIndex = buffer.indexOf('}', endIndex + 1);
+					}
+				}
+				
+				// Keep any remaining incomplete JSON in the buffer
+				buffer = buffer.substring(startIndex);
+			}
+
+			// After streaming is complete, add the full message to chat history
+			chatbotMessages = [...chatbotMessages, new AIMessage(fullMessage)];
+			streamingMessage = '';
+
+		} catch (error) {
+			console.error('Error:', error);
+			chatbotMessages = [...chatbotMessages, new AIMessage('There was an error! Check the console for more information.')];
+		} finally {
+			isWaitingForResponse = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -76,9 +145,9 @@
 <div class="pt-4">
 	<h2 class="text-lg">Chat Log:</h2>
 
-	<ChatbotMessages bind:chatbotMessages bind:isWaitingForResponse />
+	<ChatbotMessages bind:chatbotMessages bind:isWaitingForResponse bind:streamingMessage />
 
-	<ChatbotInput on:sendMessage={sendMessage} bind:isWaitingForResponse />
+	<ChatbotInput on:sendMessage={handleMessage} bind:isWaitingForResponse />
 </div>
 
 <!-- Generated diagram of the chatbot. This will update as you make changes to the graph structure -->

@@ -87,8 +87,8 @@ const llm = new ChatOpenAI({
  */
 export const createAgent = (params: { name: string, tools: DynamicStructuredTool<any>[]; prompt: string }) => {
 	const modelwithtools = llm.bindTools(params.tools, {
-		parallel_tool_calls: params.tools.length > 0 ? false : undefined
-	});
+		parallel_tool_calls: params.tools.length > 0 ? false : undefined,
+	}).withConfig({ tags: [params.name] });
 
 	const agentPrompt = ChatPromptTemplate.fromMessages([
 		['system', params.prompt],
