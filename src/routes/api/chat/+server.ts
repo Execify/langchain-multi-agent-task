@@ -60,7 +60,6 @@ export const POST = async ({ request }) => {
 			for await (const { event, data, tags } of events) {
 				
 				if (event === 'on_chat_model_stream' && tags?.includes('Supervisor')) {
-					console.log(JSON.stringify({ event, data, tags }, null, 2));
 					controller.enqueue(
 						JSON.stringify({
 							type: 'token',
