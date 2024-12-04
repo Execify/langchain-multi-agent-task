@@ -14,5 +14,5 @@ start:
 
 	@echo ""
 	@echo "Starting \033[34mSuper Chatbot 9000\033[0m..."
-	@OPENAI_API_KEY=$(shell cat .env | grep OPENAI_API_KEY | cut -d '=' -f2) npm run dev
+	@set -a && . ./.env && set +a && npm run dev
 

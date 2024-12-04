@@ -39,6 +39,11 @@ function wrapAgent(params: ReturnType<typeof createAgent>) {
 	return async (state: GraphState, config?: RunnableConfig) => {
 		console.log(`Invoking agent ${chalk.blue(params.name)}...`);
 
+		const lastMessage = state.messages.at(-1);
+		if (lastMessage instanceof ToolMessage) {
+			console.log(chalk.gray(`Tool called: "${lastMessage.name}"\n Result: ${lastMessage.content}`));
+		}
+
 		const result = await params.agent.invoke(state, config);
 
 		console.log(

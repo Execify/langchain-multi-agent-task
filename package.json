@@ -51,6 +51,7 @@
 		"tailwind-merge": "^2.5.3",
 		"tailwindcss-animated": "^1.1.2",
 		"tslab": "^1.0.22",
+		"web-streams-polyfill": "^4.0.0",
 		"zod": "^3.23.8"
 	}
 }

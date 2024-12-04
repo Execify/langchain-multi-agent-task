@@ -16,7 +16,7 @@ Use this as base for completing the task below.
 
 ## Todo
 
-[x] Add a **taskHandler** agent that can manage tasks in an SQLite database with the following functionality:
+- [x] Add a **taskHandler** agent that can manage tasks in an SQLite database with the following functionality:
   - Add a new task (addTask: Add a task with a description)
   - List all tasks (listTasks: Retrieve all tasks with their IDs, descriptions, completion status, and notes)
   - Remove a task (removeTask: Delete a task by ID)
@@ -24,18 +24,20 @@ Use this as base for completing the task below.
   - Update a task description (updateTaskDescription: Update the description of a specific task by ID)
   - Complete a task (completeTask: Mark a task as completed by ID)
 
-[ ] Represent that task table as a markdown table in the chatbot ui
+- [ ] Represent that task table as a markdown table in the chatbot ui
   - Only display the task list when the user asks for it
   - Update the graph invocation to stream events, allow token streaming + send markdown table event
   - Another option would be to add a tasks field to the agent state
   - could also render the task table where the graph png is and have it update as the agent updates the table
 
-[ ] Implement a vector store
+- [ ] Update the base prompt to auto add the agent descriptions to the other agents list
+
+- [ ] Implement a vector store
   - Perhaps a file backed knowledge store (Such as PDFs)
   
-[ ] Add context sharing between agents as "memories" rather than messages, this may help with improved reliability.
+- [ ] Add context sharing between agents as "memories" rather than messages, this may help with improved reliability.
 
-[ ] Add semantic caching (of what?)
+- [ ] Add semantic caching (of responses? so similar questions return the same answer and dont go to the agent how would this work with tasks?)
 
 
 ### Guide
