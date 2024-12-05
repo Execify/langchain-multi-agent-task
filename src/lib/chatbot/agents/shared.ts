@@ -42,7 +42,7 @@ export const buildStandardPrompt = (params: {
         </AGENT>
         <AGENT>
             <AGENT_ID>taskHandler</AGENT_ID>
-            <AGENT_DESCRIPTION>The task handler agent can manage the user's task list. Useful for adding, removing and listing tasks.</AGENT_DESCRIPTION>
+            <AGENT_DESCRIPTION>Delegate to this Agent if the user mentions anything that they have done or need to do. The task handler agent can manage the user's task list. Useful for adding, removing and listing tasks.</AGENT_DESCRIPTION>
         </AGENT>
     </OTHER_AGENTS>
     

@@ -44,8 +44,7 @@ export const POST = async ({ request }) => {
 	const config = {
 		configurable: {
 			thread_id: threadId,
-		},
-		recursionLimit: 20
+		}
 	};
 
 	const stream = new ReadableStream({

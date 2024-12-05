@@ -6,7 +6,20 @@ import chalk from 'chalk';
 import { db } from '../../db';
 import { dispatchCustomEvent } from "@langchain/core/callbacks/dispatch";
 
-
+const listTasksTool = new DynamicStructuredTool({
+	name: 'listTasks',
+	description: 'List all tasks in the task list. Only send to the user once you have completed your task.',
+	schema: z.object({
+		sendToUser: z.boolean().default(false).describe('Set to true to send the task list to the user, false for internal retrieval')
+	}),
+	func: async ({ sendToUser }) => {
+		console.log(chalk.gray(`Listing all tasks...`));
+		const tasks = await db.all('SELECT * FROM tasks');
+		
+		if (sendToUser && tasks.length > 0) await dispatchCustomEvent("taskList", { tasks });
+		return `Tasks listed successfully: ${JSON.stringify(tasks)}`;
+	}
+});
 
 const addTaskTool = new DynamicStructuredTool({
 	name: 'addTask',
@@ -17,25 +30,13 @@ const addTaskTool = new DynamicStructuredTool({
 	func: async ({ task }) => {
 		console.log(chalk.gray(`Adding task ${task} to the task list...`));
 		const result = await db.run(
-			'INSERT INTO tasks (task, completed, notes) VALUES (?, ?, ?)',
-			[task, false, JSON.stringify([])]
+			'INSERT INTO tasks (task, notes) VALUES (?, ?)',
+			[task, JSON.stringify([])]
 		);
 		return `Task "${task}" added successfully with ID ${result.lastID}`;
 	}
 });
 
-const listTasksTool = new DynamicStructuredTool({
-	name: 'listTasks',
-	description: 'List all tasks in the task list',
-	schema: z.object({}),
-	func: async () => {
-		console.log(chalk.gray(`Listing all tasks...`));
-		const tasks = await db.all('SELECT * FROM tasks');
-		
-		await dispatchCustomEvent("taskList", { tasks });
-		return `Tasks listed successfully: ${JSON.stringify(tasks)}`;
-	}
-});
 
 const removeTaskTool = new DynamicStructuredTool({
 	name: 'removeTask',
@@ -54,9 +55,9 @@ const removeTaskTool = new DynamicStructuredTool({
 	}
 });
 
-const addNoteTool = new DynamicStructuredTool({
-	name: 'addNote',
-	description: 'Add a note to a task',
+const addTaskNoteTool = new DynamicStructuredTool({
+	name: 'addTaskNote',
+	description: 'Add a note to an existing task',
 	schema: z.object({
 		taskId: z.string().describe('The ID of the task to add the note to'),
 		note: z.string().describe('The note to add to the task')
@@ -77,23 +78,6 @@ const addNoteTool = new DynamicStructuredTool({
 	}
 });
 
-const completeTaskTool = new DynamicStructuredTool({
-	name: 'completeTask',
-	description: 'Mark a task as complete or incomplete',
-	schema: z.object({
-		taskId: z.string().describe('The ID of the task to update'),
-		completed: z.boolean().describe('True to mark as complete, false to mark as incomplete')
-	}),
-	func: async ({ taskId, completed }) => {
-		console.log(chalk.gray(`Marking task ${taskId} as ${completed ? 'complete' : 'incomplete'}...`));
-		const result = await db.run(
-			'UPDATE tasks SET completed = ? WHERE id = ?',
-			[completed, taskId]
-		);
-		if (result.changes === 0) return `No task found with ID ${taskId}`;
-		return `Task ${taskId} marked as ${completed ? 'complete' : 'incomplete'}`;
-	}
-});
 
 const updateTaskDescriptionTool = new DynamicStructuredTool({
 	name: 'updateTaskDescription',
@@ -127,11 +111,14 @@ The SQLite database has the following schema:
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     task TEXT NOT NULL,
-    completed BOOLEAN DEFAULT FALSE,
     notes TEXT DEFAULT '[]'
 )
 </TASK_TABLE_SCHEMA>
 
+If a user has referenced a task in their message, first check the existing task list using the 'listTasks' tool with \`sendToUser\` set to false.
+If there is an existing task that matches the user's request, modify that task, do not create repeating tasks.
+If a user has completed a task, remove that task from the task list using the 'removeTask' tool.
+Ensure that you display the task list to the user using the 'listTasks' tool with \`sendToUser\` set to true after you have completed your task.
 Always state all the task information in your response.
 `
 	});
@@ -140,11 +127,10 @@ Always state all the task information in your response.
 		name,
 		tools: [
 			delegateTool,
-			addTaskTool,
 			listTasksTool,
+			addTaskTool,
 			removeTaskTool,
-			addNoteTool,
-			completeTaskTool,
+			addTaskNoteTool,
 			updateTaskDescriptionTool
 		],
 		prompt

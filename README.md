@@ -23,23 +23,17 @@ Use this as base for completing the task below.
   - Add notes to tasks (addNote: Add a note to a specific task by ID)
   - Update a task description (updateTaskDescription: Update the description of a specific task by ID)
   - Complete a task (completeTask: Mark a task as completed by ID)
-
 - [x] Represent that task table as a markdown table in the chatbot ui
   - Only display the task list when the user asks for it
   - Update the graph invocation to stream events, allow token streaming + send markdown table event
   - Another option would be to add a tasks field to the agent state
   - could also render the task table where the graph png is and have it update as the agent updates the table
-
-- [ ] fix the taskHandler agent so that it sends the task list event when something changes and only when its done with its response
-
-- [ ] Update the base prompt to auto add the agent descriptions to the other agents list
-
-- [ ] Implement a vector store
+- [x] fix the taskHandler agent so that it sends the task list event when something changes and only when its done with its response
+- [ ] Implement a vector store for the cat facts agent
   - Perhaps a file backed knowledge store (Such as PDFs)
-  
 - [ ] Add context sharing between agents as "memories" rather than messages, this may help with improved reliability.
-
 - [ ] Add semantic caching (of responses? so similar questions return the same answer and dont go to the agent how would this work with tasks?)
+- [ ] Update the base prompt to auto add the agent descriptions to the other agents list
 
 
 ### Guide

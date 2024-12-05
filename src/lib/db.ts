@@ -3,15 +3,14 @@ import { open } from 'sqlite';
 
 export const db = await open({
     filename: 'tasks.db',
-    driver: sqlite3.Database
+    driver: sqlite3.Database,
+    mode: sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE
 });
 
-// Create the tasks table if it doesn't exist
 await db.exec(`
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         task TEXT NOT NULL,
-        completed BOOLEAN DEFAULT FALSE,
         notes TEXT DEFAULT '[]'
     )
 `);
