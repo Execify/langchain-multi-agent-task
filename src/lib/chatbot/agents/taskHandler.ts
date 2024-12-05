@@ -4,6 +4,8 @@ import { buildStandardPrompt, createAgent } from './shared';
 import { z } from 'zod';
 import chalk from 'chalk';
 import { db } from '../../db';
+import { dispatchCustomEvent } from "@langchain/core/callbacks/dispatch";
+
 
 
 const addTaskTool = new DynamicStructuredTool({
@@ -29,7 +31,8 @@ const listTasksTool = new DynamicStructuredTool({
 	func: async () => {
 		console.log(chalk.gray(`Listing all tasks...`));
 		const tasks = await db.all('SELECT * FROM tasks');
-		return JSON.stringify(tasks, null, 2);
+		await dispatchCustomEvent("taskList", { tasks });
+		return "Tasks listed successfully (it has been displayed to the user in the chat)";
 	}
 });
 

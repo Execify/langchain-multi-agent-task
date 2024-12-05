@@ -55,8 +55,7 @@ export const POST = async ({ request }) => {
 				{ ...config, version: 'v2' }
 			);
 
-			for await (const { event, data, tags } of events) {
-				
+			for await (const { event, data, tags, name } of events) {
 				if (event === 'on_chat_model_stream' && tags?.includes('Supervisor')) {
 					controller.enqueue(
 						JSON.stringify({
@@ -67,7 +66,12 @@ export const POST = async ({ request }) => {
 				}
 
 				else if (event === 'on_custom_event') {
-					console.log("CUSTOM EVENT: ", JSON.stringify({ event, data, tags }, null, 2));
+					controller.enqueue(
+						JSON.stringify({
+							type: name,
+							data: data
+						})
+					);
 				}
 			}
 			controller.close();
