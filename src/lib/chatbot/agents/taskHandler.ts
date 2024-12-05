@@ -31,8 +31,9 @@ const listTasksTool = new DynamicStructuredTool({
 	func: async () => {
 		console.log(chalk.gray(`Listing all tasks...`));
 		const tasks = await db.all('SELECT * FROM tasks');
+		
 		await dispatchCustomEvent("taskList", { tasks });
-		return "Tasks listed successfully (it has been displayed to the user in the chat)";
+		return `Tasks listed successfully: ${JSON.stringify(tasks)}`;
 	}
 });
 
@@ -130,6 +131,8 @@ CREATE TABLE tasks (
     notes TEXT DEFAULT '[]'
 )
 </TASK_TABLE_SCHEMA>
+
+Always state all the task information in your response.
 `
 	});
 

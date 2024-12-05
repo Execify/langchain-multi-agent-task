@@ -1,26 +1,30 @@
 <script lang="ts">
-	import { type BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
+	import { type BaseMessage, HumanMessage } from '@langchain/core/messages';
 	import { twMerge } from "tailwind-merge";
+	import TaskListMessage from './TaskListMessage.svelte';
+	import type { ChatMessage } from '$lib/types';
 
     export let isWaitingForResponse: boolean;
-    export let chatbotMessages: BaseMessage[] = [];
+    export let chatMessages: ChatMessage[] = [];
     export let streamingMessage: string = '';
 </script>
 
 <div class="flex flex-col gap-2 rounded-md p-2 bg-white border">
-    {#each chatbotMessages as message}
-        <div class={twMerge('flex flex-row gap-2', message instanceof HumanMessage && 'justify-end')}>
-            <div class="flex flex-col">
-                <div
-                    class={twMerge(
+    {#each chatMessages as message}
+        {#if message.type === 'message'}
+            <div class={twMerge('flex flex-row gap-2', message.content instanceof HumanMessage && 'justify-end')}>
+                <div class="flex flex-col">
+                    <div class={twMerge(
                         'px-4 py-2 rounded-md shadow-md',
-                        message instanceof HumanMessage ? 'bg-info-50 text-info-900 shadow-info-200' : 'bg-primary-100 text-primary-950 shadow-primary-200'
-                    )}
-                >
-                    <p class="whitespace-pre-wrap">{message.content}</p>
+                        message.content instanceof HumanMessage ? 'bg-info-50 text-info-900 shadow-info-200' : 'bg-primary-100 text-primary-950 shadow-primary-200'
+                    )}>
+                        <p class="whitespace-pre-wrap">{message.content.content}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        {:else if message.type === 'taskList'}
+            <TaskListMessage tasks={message.content.tasks} />
+        {/if}
     {/each}
 
     {#if streamingMessage}
