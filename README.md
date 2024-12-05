@@ -24,11 +24,13 @@ Use this as base for completing the task below.
   - Update a task description (updateTaskDescription: Update the description of a specific task by ID)
   - Complete a task (completeTask: Mark a task as completed by ID)
 
-- [ ] Represent that task table as a markdown table in the chatbot ui
+- [x] Represent that task table as a markdown table in the chatbot ui
   - Only display the task list when the user asks for it
   - Update the graph invocation to stream events, allow token streaming + send markdown table event
   - Another option would be to add a tasks field to the agent state
   - could also render the task table where the graph png is and have it update as the agent updates the table
+
+- [ ] fix the taskHandler agent so that it sends the task list event when something changes and only when its done with its response
 
 - [ ] Update the base prompt to auto add the agent descriptions to the other agents list
 
