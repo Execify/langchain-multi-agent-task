@@ -16,3 +16,15 @@ start:
 	@echo "Starting \033[34mSuper Chatbot 9000\033[0m..."
 	@set -a && . ./.env && set +a && npm run dev
 
+.PHONY: load-vectorstore
+load-vectorstore:
+	@echo "Setting up Python virtual environment..."
+	@cd scripts && \
+		python -m venv venv && \
+		. venv/bin/activate && \
+		pip install -r requirements.txt --quiet
+	
+	@echo "Loading vector store..."
+	@cd scripts && \
+		. venv/bin/activate && \
+		python load_vectorstore.py
