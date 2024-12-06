@@ -44,11 +44,15 @@
 		"@langchain/openai": "^0.3.7",
 		"@tailwindcss/typography": "^0.5.15",
 		"chalk": "^5.3.0",
+		"chromadb": "^1.9.4",
 		"duck-duck-scrape": "^2.2.5",
 		"langchain": "^0.3.2",
+		"sqlite": "^5.1.1",
+		"sqlite3": "^5.1.7",
 		"tailwind-merge": "^2.5.3",
 		"tailwindcss-animated": "^1.1.2",
 		"tslab": "^1.0.22",
+		"web-streams-polyfill": "^4.0.0",
 		"zod": "^3.23.8"
 	}
 }

@@ -2,11 +2,17 @@
 	import ChatbotInput from './ChatbotInput.svelte';
 	import ChatbotMessages from './ChatbotMessages.svelte';
 	import { type BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
+	import { twMerge } from "tailwind-merge";
+	import { onMount } from 'svelte';
+	import type { ChatMessage } from '$lib/types';
 
 	// The messages in the chatbot
 	// We start with a welcome message
-	let chatbotMessages: BaseMessage[] = [
-		new AIMessage('Hello! I am the Super Chatbot 9000! How can I help you today?')
+	let chatMessages: ChatMessage[] = [
+		{ 
+			type: 'message', 
+			content: new AIMessage('Hello! I am the Super Chatbot 9000! How can I help you today?')
+		}
 	];
 
 	// Are we waiting for a response from the chatbot?
@@ -16,13 +22,16 @@
 	const sendMessage = async (event: CustomEvent) => {
 		const message = event.detail;
 
-		chatbotMessages = [...chatbotMessages, new HumanMessage(message)];
+		chatMessages = [...chatMessages, { 
+			type: 'message', 
+			content: new HumanMessage(message)
+		}];
 
 		// Get ready to post the messages to the server
-		const serializedMessages = chatbotMessages.map((message) => {
+		const serializedMessages = chatMessages.map((message) => {
 			return {
-				content: message.content,
-				type: message instanceof HumanMessage ? 'human' : 'ai'
+				content: message.content.content,
+				type: message.content instanceof HumanMessage ? 'human' : 'ai'
 			};
 		});
 
@@ -42,18 +51,103 @@
 		try {
 			const res = await req.json();
 
-			chatbotMessages = [...chatbotMessages, new AIMessage(res.result)];
+			chatMessages = [...chatMessages, { 
+				type: 'message', 
+				content: new AIMessage(res.result)
+			}];
 		} catch (e) {
 			console.error(e);
-			chatbotMessages = [
-				...chatbotMessages,
-				new AIMessage('There was an error! Check the console for more information.')
-			];
+			chatMessages = [...chatMessages, { 
+				type: 'message', 
+				content: new AIMessage('There was an error! Check the console for more information.')
+			}];
 		}
 
         // We are no longer waiting for a response
 		isWaitingForResponse = false;
 	};
+
+	let streamingMessage = '';
+
+	async function handleMessage(event) {
+		const message = event.detail;
+		isWaitingForResponse = true;
+		streamingMessage = '';
+
+		// Add user message immediately
+		chatMessages = [...chatMessages, { 
+			type: 'message', 
+			content: new HumanMessage({ content: message })
+		}];
+
+		try {
+			const response = await fetch('/api/chat', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					messages: chatMessages
+						.filter(msg => msg.type === 'message')
+						.map(msg => ({
+							type: msg.content._getType(),
+							content: msg.content.content
+						}))
+				})
+			});
+
+			const reader = response.body.getReader();
+			let buffer = '';
+
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				
+				buffer += new TextDecoder().decode(value);
+				
+				let startIndex = 0;
+				let endIndex = buffer.indexOf('}', startIndex);
+				
+				while (endIndex !== -1) {
+					try {
+						const jsonString = buffer.substring(startIndex, endIndex + 1);
+						const data = JSON.parse(jsonString);
+
+						if (data.type === 'token' && data.data) {
+							streamingMessage += data.data;
+						} else if (data.type === 'taskList' && data.data) {
+							chatMessages = [...chatMessages, { 
+								type: 'taskList', 
+								content: { tasks: data.data.tasks }
+							}];
+						}
+
+						startIndex = endIndex + 1;
+						endIndex = buffer.indexOf('}', startIndex);
+					} catch (e) {
+						endIndex = buffer.indexOf('}', endIndex + 1);
+					}
+				}
+				
+				buffer = buffer.substring(startIndex);
+			}
+
+			if (streamingMessage) {
+				chatMessages = [...chatMessages, { 
+					type: 'message', 
+					content: new AIMessage(streamingMessage)
+				}];
+				streamingMessage = '';
+			}
+
+		} catch (error) {
+			console.error('Error:', error);
+			chatMessages = [...chatMessages, { 
+				type: 'message', 
+				content: new AIMessage('There was an error! Check the console for more information.')
+			}];
+		} finally {
+			isWaitingForResponse = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -76,9 +170,9 @@
 <div class="pt-4">
 	<h2 class="text-lg">Chat Log:</h2>
 
-	<ChatbotMessages bind:chatbotMessages bind:isWaitingForResponse />
+	<ChatbotMessages bind:chatMessages bind:isWaitingForResponse bind:streamingMessage />
 
-	<ChatbotInput on:sendMessage={sendMessage} bind:isWaitingForResponse />
+	<ChatbotInput on:sendMessage={handleMessage} bind:isWaitingForResponse />
 </div>
 
 <!-- Generated diagram of the chatbot. This will update as you make changes to the graph structure -->

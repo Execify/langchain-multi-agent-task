@@ -11,6 +11,10 @@ import { delegateTool } from './tools/delegate';
 import { makeMathsExpert } from './agents/mathsExpert';
 import { createAgent } from './agents/shared';
 import { makeSearcherAgent } from './agents/searcher';
+import { makeTaskHandlerAgent } from './agents/taskHandler';
+import { writeFile } from 'fs/promises';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const checkpointer = new MemorySaver();
 
@@ -31,11 +35,20 @@ const OverallGraphState = Annotation.Root({
 });
 
 // Wrap the agent to return the last message
-function wrapAgent(params: ReturnType<typeof createAgent>) {
+function wrapAgent(params: ReturnType<typeof createAgent>, suffix: string = '') {
 	return async (state: GraphState, config?: RunnableConfig) => {
 		console.log(`Invoking agent ${chalk.blue(params.name)}...`);
 
+		const lastMessage = state.messages.at(-1);
+		if (lastMessage instanceof ToolMessage) {
+			console.log(chalk.gray(`Tool called: "${lastMessage.name}"\n Result: ${lastMessage.content}`));
+		}
+
 		const result = await params.agent.invoke(state, config);
+
+		if (suffix) {
+			result.content = `${result.content}\n\n${suffix}`;
+		}
 
 		console.log(
 			`Agent ${chalk.blue(params.name)} returned message: ${chalk.yellow(result.content)}`
@@ -83,8 +96,12 @@ export const agentsAndTools = {
     mathsExpert: makeMathsExpert(),
     catFacts: makeCatFactAgent(),
     marketingAdvisor: makeMarketingAdvisorAgent(),
-    searcher: makeSearcherAgent()
+    searcher: makeSearcherAgent(),
+    taskHandler: makeTaskHandlerAgent()
 };
+
+const INCLUDE_SUFFIX = "I have completed my task, repeat my findings back to the user in the final user response.";
+const EXCLUDE_SUFFIX = "I have completed my task and listed the current tasks to the user separately, do not include my results in you final response. If they ask to see the tasks again, delegate back to the taskHandler agent and I will retrieve the latest.";
 
 /**
  * Create the chatbot graph using LangGraph
@@ -94,11 +111,12 @@ export const makeChatbotGraph = async () => {
 	// Add agents to the graph. Update this to add more agents
 	// (Would loop this but typescript doesn't like it)
 	const workflow = new StateGraph(OverallGraphState)
-		.addNode('supervisor', wrapAgent(agentsAndTools['supervisor']))
-		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert']))
-		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts']))
-		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor']))
-		.addNode('searcher', wrapAgent(agentsAndTools['searcher']));
+		.addNode('supervisor', wrapAgent(agentsAndTools['supervisor'], INCLUDE_SUFFIX))
+		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert'], INCLUDE_SUFFIX))
+		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts'], INCLUDE_SUFFIX))
+		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor'], INCLUDE_SUFFIX))
+		.addNode('searcher', wrapAgent(agentsAndTools['searcher'], INCLUDE_SUFFIX))
+		.addNode('taskHandler', wrapAgent(agentsAndTools['taskHandler'], EXCLUDE_SUFFIX));
 
 	// Add tool node for delegation
     // Delegation is a special tool that allows agents to pass the conversation to another agent
@@ -120,7 +138,8 @@ export const makeChatbotGraph = async () => {
 			catFacts: 'catFacts',
 			marketingAdvisor: 'marketingAdvisor',
 			mathsExpert: 'mathsExpert',
-            searcher: 'searcher'
+            searcher: 'searcher',
+            taskHandler: 'taskHandler'
 		}
 	);
 
@@ -176,7 +195,17 @@ export const makeChatbotGraph = async () => {
 	workflow.addEdge(START, 'supervisor');
     
     // We're done! Add the chackpointer (memory saver) to the workflow and return it so it can be invoked
-	return workflow.compile({
+	const compiled = workflow.compile({
 		checkpointer
 	});
+
+	// Generate and save the graph visualization
+	const image = await compiled.getGraph().drawMermaidPng();
+	const arrayBuffer = await image.arrayBuffer();
+	
+	// Save the image to the assets directory
+	const __dirname = dirname(fileURLToPath(import.meta.url));
+	await writeFile(`${__dirname}/../../../assets/architecture.png`, Buffer.from(arrayBuffer));
+
+	return compiled;
 };

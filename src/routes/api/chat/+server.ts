@@ -37,33 +37,47 @@ const messagesSchema = z.object({
 
 export const POST = async ({ request }) => {
 	const data = await request.json();
-
-	// Validate the request body
 	const { messages } = messagesSchema.parse(data);
-
-	// Compile chatbot graph
 	const graph = await makeChatbotGraph();
 
-	// Generate a random thread id
 	const threadId = Math.random().toString(36).substring(7);
-
-	// Run chatbot
-	const result = await graph.invoke(
-		{
-			messages
-		},
-		{
-			configurable: {
-				thread_id: threadId
-			},
-            recursionLimit: 20
+	const config = {
+		configurable: {
+			thread_id: threadId,
 		}
-	);
+	};
 
-	// Return with final message
-	return new Response(
-		JSON.stringify({
-			result: result.messages.at(-1).content
-		})
-	);
+	const stream = new ReadableStream({
+		async start(controller) {
+			const events = graph.streamEvents(
+				{ messages },
+				{ ...config, version: 'v2' }
+			);
+
+			for await (const { event, data, tags, name } of events) {
+				if (event === 'on_chat_model_stream' && tags?.includes('Supervisor')) {
+					controller.enqueue(
+						JSON.stringify({
+							type: 'token',
+							data: data.chunk.content
+						})
+					);
+				}
+
+				else if (event === 'on_custom_event') {
+					controller.enqueue(
+						JSON.stringify({
+							type: name,
+							data: data
+						})
+					);
+				}
+			}
+			controller.close();
+		}
+	});
+
+	return new Response(stream, {
+		headers: { 'Content-Type': 'application/json' }
+	});
 };

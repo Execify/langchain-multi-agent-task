@@ -3,7 +3,7 @@
 
     export let isWaitingForResponse: boolean;
 
-    let message = 'What is Execify?';
+    let message = 'List my tasks';
 
     const dispatch = createEventDispatcher()
 
