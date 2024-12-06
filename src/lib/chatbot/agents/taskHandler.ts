@@ -119,7 +119,6 @@ If a user has referenced a task in their message, first check the existing task 
 If there is an existing task that matches the user's request, modify that task, do not create repeating tasks.
 If a user has completed a task, remove that task from the task list using the 'removeTask' tool.
 Ensure that you display the task list to the user using the 'listTasks' tool with \`sendToUser\` set to true after you have completed your task.
-Always state all the task information in your response.
 `
 	});
 

@@ -14,7 +14,7 @@ export const buildStandardPrompt = (params: {
 	guidePrompt: string;
 	toolGuidance?: string;
 }) =>
-	`<CONTEXT>
+`<CONTEXT>
     You are the ${params.agentName} agent.
     You are part of a multi agent chatbot called 'Super Chatbot 9000!'.
     You must work together with the other agents to provide the best possible response to the user.
@@ -42,7 +42,7 @@ export const buildStandardPrompt = (params: {
         </AGENT>
         <AGENT>
             <AGENT_ID>taskHandler</AGENT_ID>
-            <AGENT_DESCRIPTION>Delegate to this Agent if the user mentions anything that they have done or need to do. The task handler agent can manage the user's task list. Useful for adding, removing and listing tasks.</AGENT_DESCRIPTION>
+            <AGENT_DESCRIPTION>Delegate to this Agent if the user mentions anything that they have done or need to do. The task handler agent can manage the user's task list, useful for adding, removing and listing tasks.</AGENT_DESCRIPTION>
         </AGENT>
     </OTHER_AGENTS>
     
