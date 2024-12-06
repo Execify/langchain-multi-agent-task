@@ -255,3 +255,131 @@ INFO:     [06-12-2024 01:36:04] ::1:60077 - "GET /api/v2/tenants/default_tenant 
 INFO:     [06-12-2024 01:36:04] ::1:60079 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
 INFO:     [06-12-2024 01:36:04] ::1:60077 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/cat_facts HTTP/1.1" 200
 INFO:     [06-12-2024 01:36:20] ::1:60125 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/bcc6ad22-c32f-4e1d-9892-702f9d7680fe/query HTTP/1.1" 200
+INFO:     [06-12-2024 01:41:59] Shutting down
+INFO:     [06-12-2024 01:42:00] Waiting for application shutdown.
+DEBUG:    [06-12-2024 01:42:00] Stopping component System
+DEBUG:    [06-12-2024 01:42:00] Stopping component SegmentAPI
+DEBUG:    [06-12-2024 01:42:00] Stopping component LocalExecutor
+DEBUG:    [06-12-2024 01:42:00] Stopping component PersistentLocalHnswSegment
+DEBUG:    [06-12-2024 01:42:00] Stopping component LocalSegmentManager
+DEBUG:    [06-12-2024 01:42:00] Stopping component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:42:00] Stopping component Posthog
+DEBUG:    [06-12-2024 01:42:00] Stopping component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:42:00] Stopping component SqliteDB
+DEBUG:    [06-12-2024 01:42:00] Stopping component OpenTelemetryClient
+INFO:     [06-12-2024 01:42:00] Application shutdown complete.
+INFO:     [06-12-2024 01:42:00] Finished server process [71402]
+WARNING:  [06-12-2024 01:42:37] chroma_server_nofile is set to 65535, but this is less than current soft limit of 1048575. chroma_server_nofile will not be set.
+INFO:     [06-12-2024 01:42:37] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG:    [06-12-2024 01:42:37] Starting component System
+DEBUG:    [06-12-2024 01:42:37] Starting component OpenTelemetryClient
+DEBUG:    [06-12-2024 01:42:37] Starting component SqliteDB
+DEBUG:    [06-12-2024 01:42:37] Starting component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:42:37] Starting component Posthog
+DEBUG:    [06-12-2024 01:42:37] Starting component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:42:37] Starting component LocalSegmentManager
+DEBUG:    [06-12-2024 01:42:37] Starting component LocalExecutor
+DEBUG:    [06-12-2024 01:42:37] Starting component SegmentAPI
+INFO:     [06-12-2024 01:42:37] Started server process [76211]
+INFO:     [06-12-2024 01:42:37] Waiting for application startup.
+INFO:     [06-12-2024 01:42:37] Application startup complete.
+INFO:     [06-12-2024 01:42:37] Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     [06-12-2024 01:42:40] ::1:61029 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+INFO:     [06-12-2024 01:42:40] ::1:61030 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+INFO:     [06-12-2024 01:42:40] ::1:61029 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/cat_facts HTTP/1.1" 200
+INFO:     [06-12-2024 01:43:01] Shutting down
+INFO:     [06-12-2024 01:43:01] Waiting for application shutdown.
+DEBUG:    [06-12-2024 01:43:01] Stopping component System
+DEBUG:    [06-12-2024 01:43:01] Stopping component SegmentAPI
+DEBUG:    [06-12-2024 01:43:01] Stopping component LocalExecutor
+DEBUG:    [06-12-2024 01:43:01] Stopping component LocalSegmentManager
+DEBUG:    [06-12-2024 01:43:01] Stopping component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:43:01] Stopping component Posthog
+DEBUG:    [06-12-2024 01:43:01] Stopping component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:43:01] Stopping component SqliteDB
+DEBUG:    [06-12-2024 01:43:01] Stopping component OpenTelemetryClient
+INFO:     [06-12-2024 01:43:01] Application shutdown complete.
+INFO:     [06-12-2024 01:43:01] Finished server process [76211]
+WARNING:  [06-12-2024 01:43:20] chroma_server_nofile is set to 65535, but this is less than current soft limit of 1048575. chroma_server_nofile will not be set.
+INFO:     [06-12-2024 01:43:20] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG:    [06-12-2024 01:43:20] Starting component System
+DEBUG:    [06-12-2024 01:43:20] Starting component OpenTelemetryClient
+DEBUG:    [06-12-2024 01:43:20] Starting component SqliteDB
+DEBUG:    [06-12-2024 01:43:20] Starting component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:43:20] Starting component Posthog
+DEBUG:    [06-12-2024 01:43:20] Starting component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:43:20] Starting component LocalSegmentManager
+DEBUG:    [06-12-2024 01:43:20] Starting component LocalExecutor
+DEBUG:    [06-12-2024 01:43:20] Starting component SegmentAPI
+INFO:     [06-12-2024 01:43:20] Started server process [76541]
+INFO:     [06-12-2024 01:43:20] Waiting for application startup.
+INFO:     [06-12-2024 01:43:20] Application startup complete.
+INFO:     [06-12-2024 01:43:20] Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     [06-12-2024 01:43:22] ::1:61132 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+INFO:     [06-12-2024 01:43:22] ::1:61133 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+INFO:     [06-12-2024 01:43:22] ::1:61132 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/cat_facts HTTP/1.1" 200
+DEBUG:    [06-12-2024 01:44:35] Starting component PersistentLocalHnswSegment
+INFO:     [06-12-2024 01:44:35] ::1:61299 - "POST /api/v2/tenants/default_tenant/databases/default_database/collections/bcc6ad22-c32f-4e1d-9892-702f9d7680fe/query HTTP/1.1" 200
+INFO:     [06-12-2024 01:47:07] Shutting down
+INFO:     [06-12-2024 01:47:07] Waiting for application shutdown.
+DEBUG:    [06-12-2024 01:47:07] Stopping component System
+DEBUG:    [06-12-2024 01:47:07] Stopping component SegmentAPI
+DEBUG:    [06-12-2024 01:47:07] Stopping component LocalExecutor
+DEBUG:    [06-12-2024 01:47:07] Stopping component PersistentLocalHnswSegment
+DEBUG:    [06-12-2024 01:47:07] Stopping component LocalSegmentManager
+DEBUG:    [06-12-2024 01:47:07] Stopping component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:47:07] Stopping component Posthog
+DEBUG:    [06-12-2024 01:47:07] Stopping component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:47:07] Stopping component SqliteDB
+DEBUG:    [06-12-2024 01:47:07] Stopping component OpenTelemetryClient
+INFO:     [06-12-2024 01:47:07] Application shutdown complete.
+INFO:     [06-12-2024 01:47:07] Finished server process [76541]
+WARNING:  [06-12-2024 01:47:27] chroma_server_nofile is set to 65535, but this is less than current soft limit of 1048575. chroma_server_nofile will not be set.
+INFO:     [06-12-2024 01:47:27] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG:    [06-12-2024 01:47:27] Starting component System
+DEBUG:    [06-12-2024 01:47:27] Starting component OpenTelemetryClient
+DEBUG:    [06-12-2024 01:47:27] Starting component SqliteDB
+DEBUG:    [06-12-2024 01:47:27] Starting component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:47:27] Starting component Posthog
+DEBUG:    [06-12-2024 01:47:27] Starting component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:47:27] Starting component LocalSegmentManager
+DEBUG:    [06-12-2024 01:47:27] Starting component LocalExecutor
+DEBUG:    [06-12-2024 01:47:27] Starting component SegmentAPI
+INFO:     [06-12-2024 01:47:28] Started server process [77806]
+INFO:     [06-12-2024 01:47:28] Waiting for application startup.
+INFO:     [06-12-2024 01:47:28] Application startup complete.
+INFO:     [06-12-2024 01:47:28] Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     [06-12-2024 01:47:30] ::1:61707 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+INFO:     [06-12-2024 01:47:30] ::1:61709 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+INFO:     [06-12-2024 01:47:30] ::1:61707 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/cat_facts HTTP/1.1" 200
+INFO:     [06-12-2024 01:50:51] Shutting down
+INFO:     [06-12-2024 01:50:51] Waiting for application shutdown.
+DEBUG:    [06-12-2024 01:50:51] Stopping component System
+DEBUG:    [06-12-2024 01:50:51] Stopping component SegmentAPI
+DEBUG:    [06-12-2024 01:50:51] Stopping component LocalExecutor
+DEBUG:    [06-12-2024 01:50:51] Stopping component LocalSegmentManager
+DEBUG:    [06-12-2024 01:50:51] Stopping component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:50:51] Stopping component Posthog
+DEBUG:    [06-12-2024 01:50:51] Stopping component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:50:51] Stopping component SqliteDB
+DEBUG:    [06-12-2024 01:50:51] Stopping component OpenTelemetryClient
+INFO:     [06-12-2024 01:50:51] Application shutdown complete.
+INFO:     [06-12-2024 01:50:51] Finished server process [77806]
+WARNING:  [06-12-2024 01:50:54] chroma_server_nofile is set to 65535, but this is less than current soft limit of 1048575. chroma_server_nofile will not be set.
+INFO:     [06-12-2024 01:50:54] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG:    [06-12-2024 01:50:54] Starting component System
+DEBUG:    [06-12-2024 01:50:54] Starting component OpenTelemetryClient
+DEBUG:    [06-12-2024 01:50:54] Starting component SqliteDB
+DEBUG:    [06-12-2024 01:50:54] Starting component SimpleQuotaEnforcer
+DEBUG:    [06-12-2024 01:50:54] Starting component Posthog
+DEBUG:    [06-12-2024 01:50:54] Starting component SimpleRateLimitEnforcer
+DEBUG:    [06-12-2024 01:50:54] Starting component LocalSegmentManager
+DEBUG:    [06-12-2024 01:50:54] Starting component LocalExecutor
+DEBUG:    [06-12-2024 01:50:54] Starting component SegmentAPI
+INFO:     [06-12-2024 01:50:55] Started server process [79171]
+INFO:     [06-12-2024 01:50:55] Waiting for application startup.
+INFO:     [06-12-2024 01:50:55] Application startup complete.
+INFO:     [06-12-2024 01:50:55] Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     [06-12-2024 01:50:56] ::1:62209 - "GET /api/v2/tenants/default_tenant HTTP/1.1" 200
+INFO:     [06-12-2024 01:50:56] ::1:62210 - "GET /api/v2/tenants/default_tenant/databases/default_database HTTP/1.1" 200
+INFO:     [06-12-2024 01:50:56] ::1:62209 - "GET /api/v2/tenants/default_tenant/databases/default_database/collections/cat_facts HTTP/1.1" 200

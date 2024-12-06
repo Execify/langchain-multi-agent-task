@@ -27,7 +27,7 @@ You should rely on your agents as much as possible.
     </STYLE_GUIDELINES>
 </RESPONSE_MODE>
 
-Remember, DO NOT display the task list to the user in your response.
+Remember, DO NOT display the task list to the user in your response, this is handled by the taskHandler agent, just say that the tasks have been listed for the user.
 `,
         toolGuidance: `Use the 'delegate' tool to pass the conversation to another agent.
 If an agent is unable to provide a satisfactory response, you can use the 'delegate' tool to pass the conversation to another agent.        
