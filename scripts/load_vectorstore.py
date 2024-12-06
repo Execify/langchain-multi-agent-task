@@ -22,7 +22,8 @@ PERSIST_DIRECTORY = "../chroma_db"
 vectorstore = Chroma.from_texts(
     texts=text_chunks,
     embedding=OpenAIEmbeddings(),
-    persist_directory=PERSIST_DIRECTORY
+    persist_directory=PERSIST_DIRECTORY,
+    collection_name="cat_facts"
 )
 
 vectorstore.persist()

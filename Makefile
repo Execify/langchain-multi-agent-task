@@ -12,6 +12,17 @@ start:
 		exit 1; \
 	fi
 
+		@if [ -d "chroma_db" ]; then \
+		echo "Starting \033[31mChroma\033[0m server..."; \
+		cd scripts && \
+		. venv/bin/activate && \
+		cd ../ && \
+		chroma run --host localhost --port 8000 --path ./chroma_db > /dev/null 2>&1 & \
+		echo "\033[31mChroma\033[0m server started in background"; \
+	else \
+		echo "\033[33mWarning: chroma_db not found. Run 'make load-vectorstore' first if you need vector search.\033[0m"; \
+	fi
+
 	@echo ""
 	@echo "Starting \033[34mSuper Chatbot 9000\033[0m..."
 	@set -a && . ./.env && set +a && npm run dev
