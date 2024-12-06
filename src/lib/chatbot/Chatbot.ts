@@ -35,7 +35,7 @@ const OverallGraphState = Annotation.Root({
 });
 
 // Wrap the agent to return the last message
-function wrapAgent(params: ReturnType<typeof createAgent>) {
+function wrapAgent(params: ReturnType<typeof createAgent>, suffix: string = '') {
 	return async (state: GraphState, config?: RunnableConfig) => {
 		console.log(`Invoking agent ${chalk.blue(params.name)}...`);
 
@@ -45,6 +45,10 @@ function wrapAgent(params: ReturnType<typeof createAgent>) {
 		}
 
 		const result = await params.agent.invoke(state, config);
+
+		if (suffix) {
+			result.content = `${result.content}\n\n${suffix}`;
+		}
 
 		console.log(
 			`Agent ${chalk.blue(params.name)} returned message: ${chalk.yellow(result.content)}`
@@ -96,6 +100,9 @@ export const agentsAndTools = {
     taskHandler: makeTaskHandlerAgent()
 };
 
+const INCLUDE_SUFFIX = "I have completed my task, repeat my findings back to the user in the final user response.";
+const EXCLUDE_SUFFIX = "I have completed my task and listed the current tasks to the user separately, do not include my results in you final response. If they ask to see the tasks again, delegate back to the taskHandler agent and I will retrieve the latest.";
+
 /**
  * Create the chatbot graph using LangGraph
  */
@@ -104,12 +111,12 @@ export const makeChatbotGraph = async () => {
 	// Add agents to the graph. Update this to add more agents
 	// (Would loop this but typescript doesn't like it)
 	const workflow = new StateGraph(OverallGraphState)
-		.addNode('supervisor', wrapAgent(agentsAndTools['supervisor']))
-		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert']))
-		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts']))
-		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor']))
-		.addNode('searcher', wrapAgent(agentsAndTools['searcher']))
-		.addNode('taskHandler', wrapAgent(agentsAndTools['taskHandler']));
+		.addNode('supervisor', wrapAgent(agentsAndTools['supervisor'], INCLUDE_SUFFIX))
+		.addNode('mathsExpert', wrapAgent(agentsAndTools['mathsExpert'], INCLUDE_SUFFIX))
+		.addNode('catFacts', wrapAgent(agentsAndTools['catFacts'], INCLUDE_SUFFIX))
+		.addNode('marketingAdvisor', wrapAgent(agentsAndTools['marketingAdvisor'], INCLUDE_SUFFIX))
+		.addNode('searcher', wrapAgent(agentsAndTools['searcher'], INCLUDE_SUFFIX))
+		.addNode('taskHandler', wrapAgent(agentsAndTools['taskHandler'], EXCLUDE_SUFFIX));
 
 	// Add tool node for delegation
     // Delegation is a special tool that allows agents to pass the conversation to another agent

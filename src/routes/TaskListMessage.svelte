@@ -18,7 +18,7 @@
                         <tr>
                             <td class="border-t py-2">{task.id}</td>
                             <td class="border-t py-2">{task.task}</td>
-                            <td class="border-t py-2">{task.notes !== '[]' ? JSON.parse(task.notes).join(', ') : ''}</td>
+                            <td class="border-t py-2">{task.notes !== '[]' ? JSON.parse(task.notes).join(', ') : '-'}</td>
                         </tr>
                     {/each}
                 </tbody>
